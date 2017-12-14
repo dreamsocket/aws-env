@@ -5,10 +5,9 @@ services:
   awsenv:
     build: ./
     image: base2/awsenv
-    # tty: true
-    # command: ash
     environment:
-      PATH: /catch/development/dev
+      SSM_PATH: /my-app/production/prod1
+      OUTPUT: shell
       AWS_REGION: ap-southeast-2
 
   test:
@@ -16,4 +15,4 @@ services:
     tty: true
     volumes_from:
       - awsenv
-    # command: bash -c "eval $$(cat /ssm/.env) && printenv"
+    command: bash -c "eval $$(cat /ssm/.env) && printenv"

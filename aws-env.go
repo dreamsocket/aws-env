@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	keys := strings.Split(os.Getenv("PATH"), "/")
+	keys := strings.Split(os.Getenv("SSM_PATH"), "/")
 	params := make(map[string]string)
 
 	// Remove the empty string created by the split
@@ -30,22 +30,7 @@ func main() {
 		ExportVariables(path, "", params)
 	}
 
-	var buffer bytes.Buffer
-	for key, value := range params {
-		buffer.WriteString(fmt.Sprintf("export %s=$'%s'\n", key, value))
-	}
-
-	dir := "/ssm"
-	// Create /ssm directory if it doesn't exist
-	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.Mkdir(dir, 0755)
-	}
-
-	// Write evironment variables to .env file
-	err := ioutil.WriteFile("/ssm/.env", buffer.Bytes(), 0744)
-	if err != nil {
-		log.Panic(err)
-	}
+	ParametersToFile(params)
 }
 
 func CreateClient() *ssm.SSM {
@@ -72,7 +57,7 @@ func ExportVariables(path string, nextToken string, params map[string]string ) {
 	}
 
 	for _, element := range output.Parameters {
-		env, value := PrintExportParameter(path, element)
+		env, value := TrimParameter(path, element)
 		params[env] = value
 	}
 
@@ -81,7 +66,7 @@ func ExportVariables(path string, nextToken string, params map[string]string ) {
 	}
 }
 
-func PrintExportParameter(path string, parameter *ssm.Parameter) (string, string) {
+func TrimParameter(path string, parameter *ssm.Parameter) (string, string) {
 	name := *parameter.Name
 	value := *parameter.Value
 
@@ -89,4 +74,38 @@ func PrintExportParameter(path string, parameter *ssm.Parameter) (string, string
 	value = strings.Replace(value, "\n", "\\n", -1)
 
 	return env, value
+}
+
+func ParametersToFile(params map[string]string) {
+	var buffer bytes.Buffer
+	format := os.Getenv("FORMAT")
+
+	for key, value := range params {
+		buffer.WriteString(FormatParameter(key,value,format))
+	}
+
+	dir := os.Getenv("DIRECTORY")
+	if dir == "" {
+		dir = "/ssm"
+	}
+	// Create /ssm directory if it doesn't exist
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		log.Printf("Creating directory %s", dir)
+		os.MkdirAll(dir, 0755)
+	}
+
+	// Write evironment variables to .env file
+	err := ioutil.WriteFile(dir + "/.env", buffer.Bytes(), 0744)
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+func FormatParameter(key string, value string, format string) string {
+	switch format {
+	case "shell":
+		return fmt.Sprintf("%s='%s'\n", key, value)
+	default:
+		return fmt.Sprintf("export %s=$'%s'\n", key, value)
+	}
 }

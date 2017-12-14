@@ -9,23 +9,35 @@ Published as a [docker image](https://hub.docker.com/r/base2/awsenv/)
 
 Searches for SSM Parameters in your AWS account based on the variables provided and places them in a .env file
 
-```bash
-$ cat /ssm/.env
-export DB_HOST=$'mysql'
-export DB_USERNAME=$'Username'
-export DB_PASSWORD=$'SecretPassword'
-```
+## Parameters
+
+* `SSM_PATH` [Required] - Complete path structure created in SSM Parameter store
+* `AWS_REGION` [Required] - Region in which the SSM Parameters are stored
+* `DIRECTORY` [Optional] - Directory path of the .env file. Can contain child directories. Default is `/ssm`. *NOTE:* The default cannot be changed if used in a side car configuration.
+* `FORMAT` [Optional] - Format of the .env file.
+    * unset
+    ```bash
+    export DB_HOST=$'mysql'
+    export DB_USERNAME=$'Username'
+    export DB_PASSWORD=$'SecretPassword'
+    ```
+    * `shell`
+    ```bash
+    DB_HOST='mysql'
+    DB_USERNAME='Username'
+    DB_PASSWORD='SecretPassword'
+    ```
 
 ## Parameter Hierarchy
 
-Provide the hierachy structure using the `PATH` environment variable
+Provide the hierachy structure using the `SSM_PATH` environment variable
 ```yml
-PATH: /my-app/production/prod1
+SSM_PATH: /my-app/production/prod1
 ```
 
-This path can be completely dynamic and the hierarchy can have a maximum depth of five levels. You can define a parameter at any level of the hierarchy. Both of the following examples are valid:
-`/Level-1/Level-2/Level-3/Level-4/Level-5/parameter-name`
-`/Level-1/parameter-name`
+This path can be completely dynamic and the hierarchy can have a maximum depth of five levels. You can define a parameter at any level of the hierarchy.<br /> Both of the following examples are valid:<br />
+`/Level-1/Level-2/Level-3/Level-4/Level-5/parameter-name`<br />
+`/Level-1/parameter-name`<br />
 
 Higher levels of the hierarchy will override the lower levels if the same parameter name is found.<br />
 *Example:*
@@ -53,7 +65,7 @@ There are 2 ways this can be implemented
 awsenv:
   image: base2/awsenv
   environment:
-    PATH: /my-app/production/prod1
+    SSM_PATH: /my-app/production/prod1
     AWS_REGION: ap-southeast-2
 
 test:
