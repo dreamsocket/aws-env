@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	keys := strings.Split(os.Getenv("PATH"), "/")
+	keys := strings.Split(os.Getenv("SSM_PATH"), "/")
 	params := make(map[string]string)
 
 	// Remove the empty string created by the split
@@ -31,7 +31,6 @@ func main() {
 	}
 
 	ParametersToFile(params)
-
 }
 
 func CreateClient() *ssm.SSM {
