@@ -35,14 +35,18 @@ func main() {
 		buffer.WriteString(fmt.Sprintf("export %s=$'%s'\n", key, value))
 	}
 
-	dir := "/ssm"
+	dir := os.Getenv("DIRECTORY")
+	if dir == "" {
+		dir = "/ssm"
+	}
 	// Create /ssm directory if it doesn't exist
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
-		os.Mkdir(dir, 0755)
+		log.Printf("Creating directory %s", dir)
+		os.MkdirAll(dir, 0755)
 	}
 
 	// Write evironment variables to .env file
-	err := ioutil.WriteFile("/ssm/.env", buffer.Bytes(), 0744)
+	err := ioutil.WriteFile(dir + "/.env", buffer.Bytes(), 0744)
 	if err != nil {
 		log.Panic(err)
 	}
