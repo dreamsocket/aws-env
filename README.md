@@ -81,7 +81,7 @@ test:
   * eval the `/ssm/.env` file to export the environment parameters
 
 ```Dockerfile
-FROM FROM base2/awsenv as awsenv
+FROM base2/awsenv as awsenv
 
 FROM debian:jessie
 
