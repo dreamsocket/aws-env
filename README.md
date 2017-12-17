@@ -14,6 +14,7 @@ Searches for SSM Parameters in your AWS account based on the variables provided 
 * `SSM_PATH` [Required] - Complete path structure created in SSM Parameter store
 * `AWS_REGION` [Required] - Region in which the SSM Parameters are stored
 * `DIRECTORY` [Optional] - Directory path of the .env file. Can contain child directories. Default is `/ssm`. *NOTE:* The default cannot be changed if used in a side car configuration.
+* `LOG_LEVEL` [Optional] - Levels such as `fatal`, `error`, `warn`, `info`, `debug`, or `disable`. Default is `info`
 * `FORMAT` [Optional] - Format of the .env file.
     * unset
     ```bash
