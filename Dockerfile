@@ -2,11 +2,13 @@ FROM golang:latest as go
 
 RUN mkdir /build
 
-COPY aws-env.go /build
-
 WORKDIR /build
 
 RUN go get -u github.com/aws/aws-sdk-go
+
+Run go get -u github.com/kataras/golog
+
+COPY *.go /build/
 
 RUN CGO_ENABLED=0 GOOS=linux go build -v -o awsenv .
 
