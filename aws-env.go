@@ -12,7 +12,17 @@ import (
 	"strings"
 )
 
+var version string
+
 func main() {
+
+	if len(os.Args) > 1 {
+		if os.Args[1] == "-v" {
+			fmt.Printf("awsenv version %s\n", version)
+			os.Exit(0)
+		}
+	}
+
 	// Set log level if defind, default level info
 	if os.Getenv("LOG_LEVEL") != "" {
 		golog.SetLevel(os.Getenv("LOG_LEVEL"))
