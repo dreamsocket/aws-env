@@ -11,6 +11,8 @@ Searches for SSM Parameters in your AWS account based on the variables provided 
 
 ## Parameters
 
+### Environment Variables
+
 * `SSM_PATH` [Required] - Complete path structure created in SSM Parameter store
 * `AWS_REGION` [Required] - Region in which the SSM Parameters are stored
 * `DIRECTORY` [Optional] - Directory path of the .env file. Can contain child directories. Default is `/ssm`. *NOTE:* The default cannot be changed if used in a side car configuration.
@@ -28,6 +30,10 @@ Searches for SSM Parameters in your AWS account based on the variables provided 
     DB_USERNAME='Username'
     DB_PASSWORD='SecretPassword'
     ```
+
+### Command Line
+
+* `-v` [Optional] - Show version and exit 0
 
 ## Parameter Hierarchy
 
