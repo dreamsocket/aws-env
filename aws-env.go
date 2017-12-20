@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strings"
+	"github.com/base2services/aws-env/awsenv"
 )
 
 var version string
@@ -19,6 +20,9 @@ func main() {
 	if len(os.Args) > 1 {
 		if os.Args[1] == "-v" {
 			fmt.Printf("awsenv version %s\n", version)
+			os.Exit(0)
+		} else if os.Args[1] == "create" {
+			awsenv.CreateSSMParameters(os.Args[2], os.Getenv("AWS_REGION"))
 			os.Exit(0)
 		}
 	}
