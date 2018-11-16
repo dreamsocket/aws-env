@@ -30,6 +30,12 @@ Searches for SSM Parameters in your AWS account based on the variables provided 
     DB_USERNAME='Username'
     DB_PASSWORD='SecretPassword'
     ```
+    * `unquoted-shell`
+    ```bash
+    DB_HOST=mysql
+    DB_USERNAME=Username
+    DB_PASSWORD=SecretPassword
+    ```
 
 ### Command Line
 

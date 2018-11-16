@@ -120,6 +120,8 @@ func FormatParameter(key string, value string, format string) string {
 	switch format {
 	case "shell":
 		return fmt.Sprintf("%s='%s'\n", key, value)
+	case "unquoted-shell":
+		return fmt.Sprintf("%s=%s\n", key, value)
 	default:
 		return fmt.Sprintf("export %s=$'%s'\n", key, value)
 	}
