@@ -40,7 +40,7 @@ func main() {
 	// Loop through the sub paths and retrieve parameters
 	for i := range keys {
 		path = path + "/" + keys[i]
-		golog.Infof("Retriving parameters in path %s", path)
+		golog.Infof("Retrieving parameters in path %s", path)
 		ExportVariables(path, "", params)
 	}
 
