@@ -17,6 +17,7 @@ Searches for SSM Parameters in your AWS account based on the variables provided 
 * `AWS_REGION` [Required] - Region in which the SSM Parameters are stored
 * `DIRECTORY` [Optional] - Directory path of the .env file. Can contain child directories. Default is `/ssm`. *NOTE:* The default cannot be changed if used in a side car configuration.
 * `LOG_LEVEL` [Optional] - Levels such as `fatal`, `error`, `warn`, `info`, `debug`, or `disable`. Default is `info`
+* `TO_STDOUT` [Optional] - (boolean) prints the parameters to stdout to be evaled. *NOTE:* `LOG_LEVEL` needs to be set to `warn` or above.
 * `FORMAT` [Optional] - Format of the .env file.
     * unset
     ```bash
@@ -65,11 +66,25 @@ $ aws ssm put-parameter --name /my-app/production/DB_USERNAME --value "Username"
 $ aws ssm put-parameter --name /my-app/production/prod1/DB_PASSWORD --value "SecretPassword" --type SecureString --key-id "alias/aws/ssm" --region ap-southeast-2
 ```
 
+## Output
+
+awsenv can output the parameters in different ways
+
+* to .env file
+    * set `FORMAT` to `shell`, `unquoted-shell`
+    * optionally set the output directory of the .env file with `DIRECTORY`
+* eval from the .env file
+    * leave all optional defaults and eval the outputted `/ssm/.env` file. `eval $(cat /ssm/.env)`
+* eval from stdout (for readonly filesystems)
+    * set `TO_STDOUT` to `true` and eval `awsenv`. `eval $(awsenv)`
+    * set `LOG_LEVEL` to `warn` or above to stop log outputs from being evaled.
+
+
 ## Usage
 
-There are 2 ways this can be implemented
+### Sidecar
 
-1. Include `base2/awsenv` as a side car container
+Include `base2/awsenv` as a side car container
 
   * volume mount the `/ssm` directory
   * eval the `/ssm/.env` file to export the environment parameters
@@ -88,10 +103,12 @@ test:
   entrypoint: eval $(cat /ssm/.env)
 ```
 
-2. Build `FROM base2/awsenv as awsenv` and extract the binary
+### Copy Binary
+
+Build `FROM base2/awsenv as awsenv` and extract the binary
 
   * extract the binary from the `base2/awsenv` image to your `PATH`
-  * eval the `/ssm/.env` file to export the environment parameters
+  * run the awsenv binary in your entrypoint script
 
 ```Dockerfile
 FROM base2/awsenv as awsenv

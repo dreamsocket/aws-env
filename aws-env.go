@@ -44,7 +44,13 @@ func main() {
 		ExportVariables(path, "", params)
 	}
 
-	ParametersToFile(params)
+	evalStdout := strings.ToLower(os.Getenv("EVAL_STDOUT"))
+
+	if evalStdout == "true" {
+		ParametersToStdout(params)
+	} else {
+		ParametersToFile(params)
+	}
 }
 
 func CreateClient() *ssm.SSM {
@@ -91,6 +97,14 @@ func TrimParameter(path string, parameter *ssm.Parameter) (string, string) {
 	return env, value
 }
 
+func ParametersToStdout(params map[string]string) {
+	golog.Debug("Printing params to stdout")
+	for key, value := range params  {
+		key = strings.ToUpper(key)
+		fmt.Printf("export %s=$'%s'\n", key, value)
+	}
+}
+
 func ParametersToFile(params map[string]string) {
 	var buffer bytes.Buffer
 	format := os.Getenv("FORMAT")
@@ -109,6 +123,7 @@ func ParametersToFile(params map[string]string) {
 		os.MkdirAll(dir, 0755)
 	}
 
+	golog.Debugf("Writing params to %s/.env", dir)
 	// Write evironment variables to .env file
 	err := ioutil.WriteFile(dir + "/.env", buffer.Bytes(), 0744)
 	if err != nil {
