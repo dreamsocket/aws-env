@@ -44,9 +44,9 @@ func main() {
 		ExportVariables(path, "", params)
 	}
 
-	evalStdout := strings.ToLower(os.Getenv("EVAL_STDOUT"))
+	toStdout := strings.ToLower(os.Getenv("TO_STDOUT"))
 
-	if evalStdout == "true" {
+	if toStdout == "true" {
 		ParametersToStdout(params)
 	} else {
 		ParametersToFile(params)
