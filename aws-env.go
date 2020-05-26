@@ -101,7 +101,7 @@ func ParametersToStdout(params map[string]string) {
 	golog.Debug("Printing params to stdout")
 	for key, value := range params  {
 		key = strings.ToUpper(key)
-		fmt.Printf("export %s=$'%s'\n", key, value)
+		fmt.Printf("export %s='%s'\n", key, value)
 	}
 }
 
@@ -138,6 +138,6 @@ func FormatParameter(key string, value string, format string) string {
 	case "unquoted-shell":
 		return fmt.Sprintf("%s=%s\n", key, value)
 	default:
-		return fmt.Sprintf("export %s=$'%s'\n", key, value)
+		return fmt.Sprintf("export %s='%s'\n", key, value)
 	}
 }
